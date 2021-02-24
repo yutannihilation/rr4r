@@ -1,0 +1,16 @@
+LIBDIR = ./rr4r/target/release
+STATLIB = $(LIBDIR)/librr4r.a
+PKG_LIBS = -L$(LIBDIR) -lrr4r
+
+all: C_clean
+
+$(SHLIB): $(STATLIB)
+
+$(STATLIB):
+	cargo build --lib --release --manifest-path=./rr4r/Cargo.toml
+
+C_clean:
+	rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS)
+
+clean:
+	rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS) ./rr4r/target
