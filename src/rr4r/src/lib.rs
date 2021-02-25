@@ -2,6 +2,7 @@ use extendr_api::prelude::*;
 use regex::Regex;
 
 /// Detect the presence or absence of a pattern in a string.
+///
 /// @param x
 ///   A character vector to look for the patterns in.
 /// @param pattern
