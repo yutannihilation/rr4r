@@ -1,5 +1,5 @@
 Package: rr4r
-Title: Rust regex for R
+Title: Rust Regex for R
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Hiroaki",

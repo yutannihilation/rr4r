@@ -33,6 +33,7 @@ fn rr4r_detect(x: Robj, pattern: String) -> Vec<Bool> {
 }
 
 /// Extract matching patterns from a string.
+///
 /// @param x
 ///   A character vector to look for the patterns in.
 /// @param pattern
