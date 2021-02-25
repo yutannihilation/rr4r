@@ -2,10 +2,23 @@
 % Please edit documentation in R/extendr-wrappers.R
 \name{rr4r_detect}
 \alias{rr4r_detect}
-\title{Detect pattern}
+\title{Detect the presence or absence of a pattern in a string.}
 \usage{
 rr4r_detect(x, pattern)
 }
+\arguments{
+\item{x}{A character vector to look for the patterns in.}
+
+\item{pattern}{A pattern to look for.}
+}
 \description{
-Detect pattern
+Detect the presence or absence of a pattern in a string.
+}
+\examples{
+fruit <- c("apple", "banana", "pear", "pinapple")
+rr4r_detect(fruit, "a")
+rr4r_detect(fruit, "^a")
+rr4r_detect(fruit, "a$")
+rr4r_detect(fruit, "b")
+rr4r_detect(fruit, "[aeiou]")
 }

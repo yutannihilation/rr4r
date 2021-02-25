@@ -19,9 +19,20 @@ remotes::install_github("yutannihilation/rr4r")
 
 ## Example
 
+### `rr4r_detect()`
+
 ``` r
 library(rr4r)
 
-rr4r_detect("Today is 2014-01-01", r"(\d{4}-\d{2}-\d{2})")
-#> [1] TRUE
+fruit <- c("apple", "banana", "pear", "pinapple")
+rr4r_detect(fruit, "a")
+#> [1] TRUE TRUE TRUE TRUE
+rr4r_detect(fruit, "^a")
+#> [1]  TRUE FALSE FALSE FALSE
+rr4r_detect(fruit, "a$")
+#> [1] FALSE  TRUE FALSE FALSE
+rr4r_detect(fruit, "b")
+#> [1] FALSE  TRUE FALSE FALSE
+rr4r_detect(fruit, "[aeiou]")
+#> [1] TRUE TRUE TRUE TRUE
 ```
