@@ -38,3 +38,17 @@ rr4r_detect(fruit, "b")
 rr4r_detect(fruit, "[aeiou]")
 #> [1] TRUE TRUE TRUE TRUE   NA
 ```
+
+### `rr4r_extract()`
+
+``` r
+shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
+rr4r_extract(shopping_list, "\\d")
+#> [1] "4" NA  NA  "2"
+rr4r_extract(shopping_list, "[a-z]+")
+#> [1] "apples" "bag"    "bag"    "milk"
+rr4r_extract(shopping_list, "[a-z]{1,4}")
+#> [1] "appl" "bag"  "bag"  "milk"
+rr4r_extract(shopping_list, "\\b[a-z]{1,4}\\b")
+#> [1] NA     "bag"  "bag"  "milk"
+```
