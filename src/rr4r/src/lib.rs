@@ -15,9 +15,15 @@ use regex::Regex;
 /// rr4r_detect(fruit, "[aeiou]")
 /// @export
 #[extendr]
-fn rr4r_detect(x: Vec<String>, pattern: String) -> Vec<bool> {
+fn rr4r_detect(x: Vec<Option<String>>, pattern: String) -> Vec<Bool> {
     let re = Regex::new(&pattern).unwrap();
-    x.iter().map(|e| re.is_match(e)).collect()
+    x.iter().map(|e| {
+      if let Some(s) = e {
+        re.is_match(s).into()
+      } else {
+        NA_LOGICAL
+      }
+    }).collect()
 }
 
 // Macro to generate exports
