@@ -34,7 +34,7 @@ remotes::install_github("yutannihilation/rr4r")
 ```{r example}
 library(rr4r)
 
-fruit <- c("apple", "banana", "pear", "pinapple")
+fruit <- c("apple", "banana", "pear", "pinapple", NA)
 rr4r_detect(fruit, "a")
 rr4r_detect(fruit, "^a")
 rr4r_detect(fruit, "a$")

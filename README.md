@@ -24,15 +24,15 @@ remotes::install_github("yutannihilation/rr4r")
 ``` r
 library(rr4r)
 
-fruit <- c("apple", "banana", "pear", "pinapple")
+fruit <- c("apple", "banana", "pear", "pinapple", NA)
 rr4r_detect(fruit, "a")
-#> [1] TRUE TRUE TRUE TRUE
+#> [1] TRUE TRUE TRUE TRUE   NA
 rr4r_detect(fruit, "^a")
-#> [1]  TRUE FALSE FALSE FALSE
+#> [1]  TRUE FALSE FALSE FALSE    NA
 rr4r_detect(fruit, "a$")
-#> [1] FALSE  TRUE FALSE FALSE
+#> [1] FALSE  TRUE FALSE FALSE    NA
 rr4r_detect(fruit, "b")
-#> [1] FALSE  TRUE FALSE FALSE
+#> [1] FALSE  TRUE FALSE FALSE    NA
 rr4r_detect(fruit, "[aeiou]")
-#> [1] TRUE TRUE TRUE TRUE
+#> [1] TRUE TRUE TRUE TRUE   NA
 ```
