@@ -4,6 +4,8 @@
 # rr4r: Rust regex for R
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/yutannihilation/rr4r/workflows/R-CMD-check/badge.svg)](https://github.com/yutannihilation/rr4r/actions)
 <!-- badges: end -->
 
 rr4r is my practice to use Rust in an R package with the power of
