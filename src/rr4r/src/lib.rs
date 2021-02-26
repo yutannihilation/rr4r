@@ -59,12 +59,9 @@ fn rr4r_extract(x: Robj, pattern: String) -> Vec<Option<&'static str>> {
             if s.is_na() {
                 return NA_STRING;
             }
-            if let Some(cap) = re.captures(&s) {
-                if let Some(m) = cap.get(0) {
-                    Some(m.as_str())
-                } else {
-                    NA_STRING
-                }
+
+            if let Some(m) = re.find(&s) {
+                Some(m.as_str())
             } else {
                 NA_STRING
             }
