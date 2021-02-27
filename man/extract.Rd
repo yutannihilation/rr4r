@@ -2,9 +2,12 @@
 % Please edit documentation in R/extract.R
 \name{rr4r_extract}
 \alias{rr4r_extract}
+\alias{rr4r_extract_all}
 \title{Extract matching patterns from a string.}
 \usage{
 rr4r_extract(x, pattern)
+
+rr4r_extract_all(x, pattern)
 }
 \arguments{
 \item{x}{A character vector to look for the patterns in.}
@@ -15,9 +18,16 @@ rr4r_extract(x, pattern)
 Extract matching patterns from a string.
 }
 \examples{
+### These examples are taken from stringr's doc (?str_extract) ###
+
 shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
 rr4r_extract(shopping_list, "\\\\d")
 rr4r_extract(shopping_list, "[a-z]+")
 rr4r_extract(shopping_list, "[a-z]{1,4}")
 rr4r_extract(shopping_list, "\\\\b[a-z]{1,4}\\\\b")
+
+# Extract all matches
+rr4r_extract_all(shopping_list, "[a-z]+")
+rr4r_extract_all(shopping_list, "\\\\b[a-z]+\\\\b")
+rr4r_extract_all(shopping_list, "\\\\d")
 }

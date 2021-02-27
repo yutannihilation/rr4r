@@ -71,6 +71,28 @@ impl RR4R {
             })
             .collect::<Vec<_>>()
     }
+
+    fn rr4r_extract_all(&mut self, x: Robj, pattern: String) -> Robj {
+        if x.is_na() {
+            return List(NA_STRING).into();
+        }
+        let re = self.get_or_compile_regex(&pattern);
+
+        let x_str_iter = x.as_str_iter().unwrap();
+        let list_inner: Vec<Robj> = x_str_iter
+            .map(|s| {
+                if s.is_na() {
+                    return NA_STRING.into_robj();
+                }
+
+                let v: Vec<String> = re.captures_iter(&s).map(|cap| cap[0].to_string()).collect();
+
+                v.iter().map(AsRef::as_ref).map(|s| Some(s)).collect_robj()
+            })
+            .collect();
+
+        list_inner.into_robj()
+    }
 }
 
 // Macro to generate exports

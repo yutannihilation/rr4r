@@ -12,9 +12,15 @@ RR4R <- new.env(parent = emptyenv())
 
 RR4R$new <- function(cap) .Call(wrap__RR4R__new, cap)
 
+RR4R$resize <- function(cap) invisible(.Call(wrap__RR4R__resize, self, cap))
+
+RR4R$clear <- function() invisible(.Call(wrap__RR4R__clear, self))
+
 RR4R$rr4r_detect <- function(x, pattern) .Call(wrap__RR4R__rr4r_detect, self, x, pattern)
 
 RR4R$rr4r_extract <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract, self, x, pattern)
+
+RR4R$rr4r_extract_all <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract_all, self, x, pattern)
 
 #' @export
 `$.RR4R` <- function (self, name) { func <- RR4R[[name]]; environment(func) <- environment(); func }

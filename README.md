@@ -27,6 +27,7 @@ remotes::install_github("yutannihilation/rr4r")
 library(rr4r)
 
 fruit <- c("apple", "banana", "pear", "pinapple", NA)
+
 rr4r_detect(fruit, "a")
 #> [1] TRUE TRUE TRUE TRUE   NA
 rr4r_detect(fruit, "^a")
@@ -43,6 +44,7 @@ rr4r_detect(fruit, "[aeiou]")
 
 ``` r
 shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
+
 rr4r_extract(shopping_list, "\\d")
 #> [1] "4" NA  NA  "2"
 rr4r_extract(shopping_list, "[a-z]+")
@@ -51,4 +53,46 @@ rr4r_extract(shopping_list, "[a-z]{1,4}")
 #> [1] "appl" "bag"  "bag"  "milk"
 rr4r_extract(shopping_list, "\\b[a-z]{1,4}\\b")
 #> [1] NA     "bag"  "bag"  "milk"
+```
+
+### `rr4r_extract_all()`
+
+``` r
+# Extract all matches
+rr4r_extract_all(shopping_list, "[a-z]+")
+#> [[1]]
+#> [1] "apples" "x"     
+#> 
+#> [[2]]
+#> [1] "bag"   "of"    "flour"
+#> 
+#> [[3]]
+#> [1] "bag"   "of"    "sugar"
+#> 
+#> [[4]]
+#> [1] "milk" "x"
+rr4r_extract_all(shopping_list, "\\b[a-z]+\\b")
+#> [[1]]
+#> [1] "apples"
+#> 
+#> [[2]]
+#> [1] "bag"   "of"    "flour"
+#> 
+#> [[3]]
+#> [1] "bag"   "of"    "sugar"
+#> 
+#> [[4]]
+#> [1] "milk"
+rr4r_extract_all(shopping_list, "\\d")
+#> [[1]]
+#> [1] "4"
+#> 
+#> [[2]]
+#> character(0)
+#> 
+#> [[3]]
+#> character(0)
+#> 
+#> [[4]]
+#> [1] "2"
 ```

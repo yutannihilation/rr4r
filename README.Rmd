@@ -36,6 +36,7 @@ remotes::install_github("yutannihilation/rr4r")
 library(rr4r)
 
 fruit <- c("apple", "banana", "pear", "pinapple", NA)
+
 rr4r_detect(fruit, "a")
 rr4r_detect(fruit, "^a")
 rr4r_detect(fruit, "a$")
@@ -47,9 +48,18 @@ rr4r_detect(fruit, "[aeiou]")
 
 ```{r extract}
 shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
+
 rr4r_extract(shopping_list, "\\d")
 rr4r_extract(shopping_list, "[a-z]+")
 rr4r_extract(shopping_list, "[a-z]{1,4}")
 rr4r_extract(shopping_list, "\\b[a-z]{1,4}\\b")
 ```
 
+### `rr4r_extract_all()`
+
+```{r extract_all}
+# Extract all matches
+rr4r_extract_all(shopping_list, "[a-z]+")
+rr4r_extract_all(shopping_list, "\\b[a-z]+\\b")
+rr4r_extract_all(shopping_list, "\\d")
+```

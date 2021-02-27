@@ -15,6 +15,8 @@ rr4r_detect(x, pattern)
 Detect the presence or absence of a pattern in a string.
 }
 \examples{
+### These examples are taken from stringr's doc (?str_detect) ###
+
 fruit <- c("apple", "banana", "pear", "pinapple")
 rr4r_detect(fruit, "a")
 rr4r_detect(fruit, "^a")
