@@ -12,3 +12,4 @@ crate-type = ["staticlib"]
 [dependencies]
 extendr-api = "*"
 regex = "1"
+lru = "*"

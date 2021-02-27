@@ -4,7 +4,7 @@
 \name{rr4r-package}
 \alias{rr4r}
 \alias{rr4r-package}
-\title{rr4r: Rust regex for R}
+\title{rr4r: Rust Regex for R}
 \description{
 Do some regex-fu.
 }
