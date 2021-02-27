@@ -25,6 +25,14 @@ impl RR4R {
         Self { cache }
     }
 
+    fn resize(&mut self, cap: u16) {
+        self.cache.resize(cap.into())
+    }
+
+    fn clear(&mut self) {
+        self.cache.clear()
+    }
+
     fn rr4r_detect(&mut self, x: Robj, pattern: String) -> Vec<Bool> {
         if x.is_na() {
             return vec![NA_LOGICAL];
