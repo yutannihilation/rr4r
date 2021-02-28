@@ -1,4 +1,4 @@
-use extendr_api::{prelude::*, HashMap};
+use extendr_api::prelude::*;
 use lru::LruCache;
 use regex::Regex;
 
@@ -114,51 +114,52 @@ impl RR4R {
                 }
             })
             .collect();
+        let ncol = group_names.len();
 
-        let mut tmp: HashMap<String, Vec<Option<&str>>> = HashMap::with_capacity(group_names.len());
-        for colname in group_names.iter() {
-            tmp.insert(colname.clone(), Vec::with_capacity(x.len()));
+        let mut tmp: Vec<Vec<Option<&str>>> = Vec::with_capacity(group_names.len());
+        for _ in 0..ncol {
+            tmp.push(Vec::with_capacity(x.len()));
         }
 
         if x.is_na() {
-            for colname in group_names.iter() {
-                tmp.get_mut(colname).unwrap().push(NA_STRING);
+            for i in 0..ncol {
+                tmp.get_mut(i).unwrap().push(NA_STRING);
             }
         } else {
             let x_str_iter = x.as_str_iter().unwrap();
             for s in x_str_iter {
                 if s.is_na() {
-                    for colname in group_names.iter() {
-                        tmp.get_mut(colname).unwrap().push(NA_STRING);
+                    for i in 0..ncol {
+                        tmp.get_mut(i).unwrap().push(NA_STRING);
                     }
                     continue;
                 }
 
                 if let Some(cap) = re.captures(&s) {
-                    for (i, colname) in group_names.iter().enumerate() {
+                    for i in 0..ncol {
                         if let Some(m) = cap.get(i + 1) {
-                            tmp.get_mut(colname).unwrap().push(Some(m.as_str()));
+                            tmp.get_mut(i).unwrap().push(Some(m.as_str()));
                         } else {
-                            tmp.get_mut(&group_names[i]).unwrap().push(NA_STRING);
+                            tmp.get_mut(i).unwrap().push(NA_STRING);
                         }
                     }
                 } else {
-                    for colname in group_names.iter() {
-                        tmp.get_mut(colname).unwrap().push(NA_STRING);
+                    for i in 0..ncol {
+                        tmp.get_mut(i).unwrap().push(NA_STRING);
                     }
                 }
             }
         }
 
+        // Create a list from Vec
         let result: Robj = tmp
-            .iter()
-            .map(|(k, v)| (k.as_str(), v.to_owned().into_robj()))
-            .collect::<HashMap<&str, Robj>>()
+            .into_iter()
+            .map(|v| v.to_owned().into_robj())
+            // To create a list, we need to craete Vec<Robj> first, then convert it to Robj.
+            .collect::<Vec<Robj>>()
             .into_robj();
 
-        let colnames: Robj = group_names.into_robj();
-
-        list!(result = result, colnames = colnames)
+        result.set_names(group_names).unwrap()
     }
 }
 
