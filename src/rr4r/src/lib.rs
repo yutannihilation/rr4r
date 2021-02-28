@@ -124,15 +124,31 @@ impl RR4R {
             for colname in group_names.iter() {
                 tmp.get_mut(colname).unwrap().push(NA_STRING);
             }
+        } else {
+            let x_str_iter = x.as_str_iter().unwrap();
+            for s in x_str_iter {
+                if s.is_na() {
+                    for colname in group_names.iter() {
+                        tmp.get_mut(colname).unwrap().push(NA_STRING);
+                    }
+                }
 
-            return tmp
-                .iter()
-                .map(|(k, v)| (k.as_str(), v.to_owned().into_robj()))
-                .collect::<HashMap<&str, Robj>>()
-                .into();
+                for cap in re.captures_iter(&s) {
+                    for (i, colname) in group_names.iter().enumerate() {
+                        if let Some(m) = cap.get(i + 1) {
+                            tmp.get_mut(colname).unwrap().push(Some(m.as_str()));
+                        } else {
+                            tmp.get_mut(&group_names[i]).unwrap().push(NA_STRING);
+                        }
+                    }
+                }
+            }
         }
 
-        NA_LOGICAL.into()
+        tmp.iter()
+            .map(|(k, v)| (k.as_str(), v.to_owned().into_robj()))
+            .collect::<HashMap<&str, Robj>>()
+            .into()
     }
 }
 
