@@ -96,3 +96,24 @@ rr4r_extract_all(shopping_list, "\\d")
 #> [[4]]
 #> [1] "2"
 ```
+
+### `rr4r_extract_groups()`
+
+``` r
+library(dplyr, warn.conflicts = FALSE)
+
+tibble(
+  x = c("2020-01-02", "2021-12-31", "2022-08-09")
+) %>% 
+  mutate(
+    rr4r_extract_groups(x, 
+      pattern = "(?P<year>\\d{4})-(?P<month>\\d{2})-(?P<day>\\d{2})"
+    )
+  )
+#> # A tibble: 3 x 4
+#>   x          year  month day  
+#>   <chr>      <chr> <chr> <chr>
+#> 1 2020-01-02 2020  01    02   
+#> 2 2021-12-31 2021  12    31   
+#> 3 2022-08-09 2022  08    09
+```
