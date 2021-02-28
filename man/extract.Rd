@@ -3,11 +3,14 @@
 \name{rr4r_extract}
 \alias{rr4r_extract}
 \alias{rr4r_extract_all}
+\alias{rr4r_extract_groups}
 \title{Extract matching patterns from a string.}
 \usage{
 rr4r_extract(x, pattern)
 
 rr4r_extract_all(x, pattern)
+
+rr4r_extract_groups(x, pattern)
 }
 \arguments{
 \item{x}{A character vector to look for the patterns in.}

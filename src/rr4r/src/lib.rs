@@ -1,4 +1,4 @@
-use extendr_api::prelude::*;
+use extendr_api::{prelude::*, HashMap};
 use lru::LruCache;
 use regex::Regex;
 
@@ -85,6 +85,8 @@ impl RR4R {
                     return NA_STRING.into_robj();
                 }
 
+                // This needs to be collected as Vec<String> first, otherwise map(AsRef::as_ref) cannot be applied,
+                // though I don't understand why...
                 let v: Vec<String> = re.captures_iter(&s).map(|cap| cap[0].to_string()).collect();
 
                 v.iter().map(AsRef::as_ref).map(|s| Some(s)).collect_robj()
@@ -92,6 +94,45 @@ impl RR4R {
             .collect();
 
         list_inner.into_robj()
+    }
+
+    fn rr4r_extract_groups(&mut self, x: Robj, pattern: String) -> Robj {
+        // This function doesn't need to handle the case when `x` is NA specially
+
+        let re = self.get_or_compile_regex(&pattern);
+        let group_names: Vec<_> = re
+            .capture_names()
+            // First group is always for the whole match and doesn't have name
+            .skip(1)
+            // For groups that doesn't have names, automatically assign names like "X1"
+            .enumerate()
+            .map(|(i, s)| {
+                if s.is_some() {
+                    s.unwrap().to_string()
+                } else {
+                    format!("X{}", i + 1)
+                }
+            })
+            .collect();
+
+        let mut tmp: HashMap<String, Vec<Option<&str>>> = HashMap::with_capacity(group_names.len());
+        for colname in group_names.iter() {
+            tmp.insert(colname.clone(), Vec::with_capacity(x.len()));
+        }
+
+        if x.is_na() {
+            for colname in group_names.iter() {
+                tmp.get_mut(colname).unwrap().push(NA_STRING);
+            }
+
+            return tmp
+                .iter()
+                .map(|(k, v)| (k.as_str(), v.to_owned().into_robj()))
+                .collect::<HashMap<&str, Robj>>()
+                .into();
+        }
+
+        NA_LOGICAL.into()
     }
 }
 

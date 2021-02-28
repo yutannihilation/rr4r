@@ -28,3 +28,9 @@ rr4r_extract <- function(x, pattern) {
 rr4r_extract_all <- function(x, pattern) {
   rr4r_env$RR4R$rr4r_extract_all(x, pattern)
 }
+
+#' @rdname extract
+#' @export
+rr4r_extract_groups <- function(x, pattern) {
+  tibble::new_tibble(rr4r_env$RR4R$rr4r_extract_groups(x, pattern))
+}
