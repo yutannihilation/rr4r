@@ -4,5 +4,5 @@
 void R_init_rr4r_extendr(void *dll);
 
 void R_init_rr4r(void *dll) {
-  R_init_rr4r_extendr(dll);
+    R_init_rr4r_extendr(dll);
 }

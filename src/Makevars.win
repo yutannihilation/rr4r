@@ -1,5 +1,5 @@
 TARGET = $(subst 64,x86_64,$(subst 32,i686,$(WIN)))-pc-windows-gnu
-LIBDIR = ./rr4r/target/$(TARGET)/release
+LIBDIR = ./rust/target/$(TARGET)/release
 STATLIB = $(LIBDIR)/librr4r.a
 PKG_LIBS = -L$(LIBDIR) -lrr4r -lws2_32 -ladvapi32 -luserenv
 
@@ -8,10 +8,10 @@ all: C_clean
 $(SHLIB): $(STATLIB)
 
 $(STATLIB):
-	cargo build --target=$(TARGET) --release --lib --manifest-path=./rr4r/Cargo.toml
+	cargo build --target=$(TARGET) --lib --release --manifest-path=./rust/Cargo.toml
 
 C_clean:
 	rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS)
 
 clean:
-	rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS) ./rr4r/target
+	rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS) rust/target
