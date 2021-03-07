@@ -117,3 +117,11 @@ tibble(
 #> 2 2021-12-31 2021  12    31   
 #> 3 2022-08-09 2022  08    09
 ```
+
+### `rr4r_replace()`
+
+``` r
+fruits <- c("one apple", "two pears", "three bananas")
+rr4r_replace(fruits, "[aeiou]", "-")
+#> [1] "-ne apple"     "tw- pears"     "thr-e bananas"
+```

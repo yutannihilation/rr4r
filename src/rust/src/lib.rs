@@ -50,9 +50,9 @@ impl RR4R {
             .collect::<Vec<_>>()
     }
 
-    fn rr4r_extract(&mut self, x: Robj, pattern: String) -> Vec<Option<&'static str>> {
+    fn rr4r_extract(&mut self, x: Robj, pattern: String) -> Vec<Option<String>> {
         if x.is_na() {
-            return vec![NA_STRING];
+            return vec![None];
         }
         let re = self.get_or_compile_regex(&pattern);
 
@@ -60,13 +60,13 @@ impl RR4R {
         x_str_iter
             .map(|s| {
                 if s.is_na() {
-                    return NA_STRING;
+                    return None;
                 }
 
                 if let Some(m) = re.find(&s) {
-                    Some(m.as_str())
+                    Some(m.as_str().to_string())
                 } else {
-                    NA_STRING
+                    None
                 }
             })
             .collect::<Vec<_>>()
@@ -85,11 +85,9 @@ impl RR4R {
                     return NA_STRING.into_robj();
                 }
 
-                // This needs to be collected as Vec<String> first, otherwise map(AsRef::as_ref) cannot be applied,
-                // though I don't understand why...
-                let v: Vec<String> = re.captures_iter(&s).map(|cap| cap[0].to_string()).collect();
-
-                v.iter().map(AsRef::as_ref).map(|s| Some(s)).collect_robj()
+                re.captures_iter(&s)
+                    .map(|cap| Some(cap[0].to_string()))
+                    .collect_robj()
             })
             .collect();
 
@@ -116,21 +114,21 @@ impl RR4R {
             .collect();
         let ncol = group_names.len();
 
-        let mut tmp: Vec<Vec<Option<&str>>> = Vec::with_capacity(group_names.len());
+        let mut tmp: Vec<Vec<Option<String>>> = Vec::with_capacity(group_names.len());
         for _ in 0..ncol {
             tmp.push(Vec::with_capacity(x.len()));
         }
 
         if x.is_na() {
             for i in 0..ncol {
-                tmp.get_mut(i).unwrap().push(NA_STRING);
+                tmp.get_mut(i).unwrap().push(None);
             }
         } else {
             let x_str_iter = x.as_str_iter().unwrap();
             for s in x_str_iter {
                 if s.is_na() {
                     for i in 0..ncol {
-                        tmp.get_mut(i).unwrap().push(NA_STRING);
+                        tmp.get_mut(i).unwrap().push(None);
                     }
                     continue;
                 }
@@ -138,14 +136,14 @@ impl RR4R {
                 if let Some(cap) = re.captures(&s) {
                     for i in 0..ncol {
                         if let Some(m) = cap.get(i + 1) {
-                            tmp.get_mut(i).unwrap().push(Some(m.as_str()));
+                            tmp.get_mut(i).unwrap().push(Some(m.as_str().to_string()));
                         } else {
-                            tmp.get_mut(i).unwrap().push(NA_STRING);
+                            tmp.get_mut(i).unwrap().push(None);
                         }
                     }
                 } else {
                     for i in 0..ncol {
-                        tmp.get_mut(i).unwrap().push(NA_STRING);
+                        tmp.get_mut(i).unwrap().push(None);
                     }
                 }
             }
