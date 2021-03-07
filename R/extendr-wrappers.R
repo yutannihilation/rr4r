@@ -24,6 +24,8 @@ RR4R$rr4r_extract_all <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract_all
 
 RR4R$rr4r_extract_groups <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract_groups, self, x, pattern)
 
+RR4R$rr4r_replace <- function(x, pattern, replacement) .Call(wrap__RR4R__rr4r_replace, self, x, pattern, replacement)
+
 #' @export
 `$.RR4R` <- function (self, name) { func <- RR4R[[name]]; environment(func) <- environment(); func }
 

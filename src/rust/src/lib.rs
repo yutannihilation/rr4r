@@ -161,6 +161,29 @@ impl RR4R {
 
         result.set_names(group_names).unwrap()
     }
+
+    fn rr4r_replace(
+        &mut self,
+        x: Robj,
+        pattern: String,
+        replacement: String,
+    ) -> Vec<Option<String>> {
+        if x.is_na() {
+            return vec![None];
+        }
+        let re = self.get_or_compile_regex(&pattern);
+        let replacement = replacement.as_str();
+
+        let x_str_iter = x.as_str_iter().unwrap();
+        x_str_iter
+            .map(|s| {
+                if s.is_na() {
+                    return None;
+                }
+                Some(re.replace(s, replacement).to_string())
+            })
+            .collect()
+    }
 }
 
 // Macro to generate exports
