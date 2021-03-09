@@ -7,6 +7,6 @@ edition = "2018"
 crate-type = ["staticlib"]
 
 [dependencies]
-extendr-api = "*"
+extendr-api = { git = "https://github.com/extendr/extendr" }
 regex = "1"
 lru = "*"

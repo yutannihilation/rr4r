@@ -1,6 +1,8 @@
 use extendr_api::prelude::*;
 use lru::LruCache;
+use regex::Captures;
 use regex::Regex;
+use regex::Replacer;
 
 #[extendr]
 pub struct RR4R {
@@ -164,13 +166,14 @@ impl RR4R {
         &mut self,
         x: Robj,
         pattern: String,
-        replacement: String,
+        replacement: Function,
     ) -> Vec<Option<String>> {
         if x.is_na() {
             return vec![None];
         }
         let re = self.get_or_compile_regex(&pattern);
-        let replacement = replacement.as_str();
+        let replacement = RR4RFunc(replacement);
+        // let replacement = replacement.as_str();
 
         let x_str_iter = x.as_str_iter().unwrap();
         x_str_iter
@@ -178,9 +181,30 @@ impl RR4R {
                 if s.is_na() {
                     return None;
                 }
-                Some(re.replace(s, replacement).to_string())
+                Some(re.replace(s, &replacement).to_string())
             })
             .collect()
+    }
+}
+
+struct RR4RFunc(Function);
+
+impl From<Function> for RR4RFunc {
+    fn from(func: Function) -> Self {
+        Self(func)
+    }
+}
+
+impl Replacer for &RR4RFunc {
+    fn replace_append(&mut self, caps: &Captures, dst: &mut String) {
+        if let Some(m) = self
+            .0
+            .call(pairlist!(caps[0].into_robj()))
+            .unwrap()
+            .as_str()
+        {
+            dst.push_str(m);
+        }
     }
 }
 
