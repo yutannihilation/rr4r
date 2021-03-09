@@ -121,7 +121,10 @@ tibble(
 ### `rr4r_replace()`
 
 ``` r
-fruits <- c("one apple", "two pears", "three bananas")
-rr4r_replace(fruits, "[aeiou]", "-")
-#> [1] "-ne apple"     "tw- pears"     "thr-e bananas"
+# TODO
+# fruits <- c("one apple", "two pears", "three bananas")
+# rr4r_replace(fruits, "[aeiou]", "-")
+
+rr4r_replace("a1", "\\D", toupper)
+#> [1] "A1"
 ```
