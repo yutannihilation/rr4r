@@ -20,7 +20,9 @@ RR4R$rr4r_detect <- function(x, pattern) .Call(wrap__RR4R__rr4r_detect, self, x,
 
 RR4R$rr4r_extract <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract, self, x, pattern)
 
-RR4R$rr4r_extract_all <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract_all, self, x, pattern)
+RR4R$rr4r_extract_part <- function(x, pattern, i) .Call(wrap__RR4R__rr4r_extract_part, self, x, pattern, i)
+
+RR4R$rr4r_extract_all <- function(x, pattern, i) .Call(wrap__RR4R__rr4r_extract_all, self, x, pattern, i)
 
 RR4R$rr4r_extract_groups <- function(x, pattern) .Call(wrap__RR4R__rr4r_extract_groups, self, x, pattern)
 

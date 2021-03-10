@@ -4,6 +4,9 @@
 #'   A character vector to look for the patterns in.
 #' @param pattern
 #'   A pattern to look for.
+#' @param i
+#'   Index of a capture group to extract. If not specified, extract the whole
+#'   match.
 #' @examples
 #' ### These examples are taken from stringr's doc (?str_extract) ###
 #'
@@ -19,14 +22,21 @@
 #' rr4r_extract_all(shopping_list, "\\d")
 #' @rdname extract
 #' @export
-rr4r_extract <- function(x, pattern) {
-  rr4r_env$RR4R$rr4r_extract(x, pattern)
+rr4r_extract <- function(x, pattern, i = NULL) {
+  if (is.null(i)) {
+    rr4r_env$RR4R$rr4r_extract(x, pattern)
+  } else {
+    rr4r_env$RR4R$rr4r_extract_part(x, pattern, i)
+  }
 }
 
 #' @rdname extract
 #' @export
-rr4r_extract_all <- function(x, pattern) {
-  rr4r_env$RR4R$rr4r_extract_all(x, pattern)
+rr4r_extract_all <- function(x, pattern, i = NULL) {
+  if (is.null(i)) {
+    i <- 0L
+  }
+  rr4r_env$RR4R$rr4r_extract_all(x, pattern, i)
 }
 
 #' @rdname extract

@@ -7,9 +7,9 @@
 \alias{rr4r_replace}
 \title{Extract matching patterns from a string.}
 \usage{
-rr4r_extract(x, pattern)
+rr4r_extract(x, pattern, i = NULL)
 
-rr4r_extract_all(x, pattern)
+rr4r_extract_all(x, pattern, i = NULL)
 
 rr4r_extract_groups(x, pattern)
 
@@ -19,6 +19,9 @@ rr4r_replace(x, pattern, replacement)
 \item{x}{A character vector to look for the patterns in.}
 
 \item{pattern}{A pattern to look for.}
+
+\item{i}{Index of a capture group to extract. If not specified, extract the whole
+match.}
 
 \item{replacement}{A pattern to replace, or a function to generate the replacement strings.}
 }

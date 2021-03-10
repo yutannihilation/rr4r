@@ -74,11 +74,52 @@ impl RR4R {
             .collect::<Vec<_>>()
     }
 
-    fn rr4r_extract_all(&mut self, x: Robj, pattern: String) -> Robj {
+    fn rr4r_extract_part(&mut self, x: Robj, pattern: String, i: u8) -> Vec<Option<String>> {
+        if x.is_na() {
+            return vec![None];
+        }
+        let re = self.get_or_compile_regex(&pattern);
+
+        if i as usize > re.captures_len() {
+            panic!(
+                "Regex pattern '{:?}' has only {} capture groups",
+                re,
+                re.captures_len()
+            );
+        }
+
+        let x_str_iter = x.as_str_iter().unwrap();
+        x_str_iter
+            .map(|s| {
+                if s.is_na() {
+                    return None;
+                }
+
+                let cap = re.captures(&s);
+                if cap.is_none() {
+                    return None;
+                }
+                if let Some(m) = cap?.get(i as usize) {
+                    Some(m.as_str().to_string())
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>()
+    }
+
+    fn rr4r_extract_all(&mut self, x: Robj, pattern: String, i: u8) -> Robj {
         if x.is_na() {
             return List(NA_STRING).into();
         }
         let re = self.get_or_compile_regex(&pattern);
+        if i as usize > re.captures_len() {
+            panic!(
+                "Regex pattern '{:?}' has only {} capture groups",
+                re,
+                re.captures_len()
+            );
+        }
 
         let x_str_iter = x.as_str_iter().unwrap();
         let list_inner: Vec<Robj> = x_str_iter
@@ -88,7 +129,13 @@ impl RR4R {
                 }
 
                 re.captures_iter(&s)
-                    .map(|cap| Some(cap[0].to_string()))
+                    .map(|cap| {
+                        let m = cap.get(i as usize);
+                        if m.is_none() {
+                            return None;
+                        }
+                        Some(m.unwrap().as_str().to_string())
+                    })
                     .collect_robj()
             })
             .collect();

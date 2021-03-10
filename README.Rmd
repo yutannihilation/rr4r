@@ -55,6 +55,23 @@ rr4r_extract(shopping_list, "[a-z]{1,4}")
 rr4r_extract(shopping_list, "\\b[a-z]{1,4}\\b")
 ```
 
+`rr4r_extract()` can accept `i` to choose which capture group to extract.
+This is useful when you don't need the whole match (with stringi/stringr,
+you can use lookahead or lookbehind for this purpose, but Rust's regex crate
+doesn't support it for performance reason).
+
+```{r extract_index}
+# Without index
+rr4r_extract(c("<p>foo</p>", "<p>bar</p>"), "<p>(.*)</p>")
+
+# With index
+rr4r_extract(c("<p>foo</p>", "<p>bar</p>"), "<p>(.*)</p>", 1)
+
+# stringr's equivalent using positive lookahead/lookbehind
+stringr::str_extract(c("<p>foo</p>", "<p>bar</p>"), "(?<=<p>).*(?=</p>)")
+```
+
+
 ### `rr4r_extract_all()`
 
 ```{r extract_all}
