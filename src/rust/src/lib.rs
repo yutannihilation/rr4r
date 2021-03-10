@@ -162,29 +162,35 @@ impl RR4R {
         result.set_names(group_names).unwrap()
     }
 
-    fn rr4r_replace(
-        &mut self,
-        x: Robj,
-        pattern: String,
-        replacement: Function,
-    ) -> Vec<Option<String>> {
+    fn rr4r_replace(&mut self, x: Robj, pattern: String, replacement: Robj) -> Vec<Option<String>> {
         if x.is_na() {
             return vec![None];
         }
         let re = self.get_or_compile_regex(&pattern);
-        let replacement = RR4RFunc(replacement);
-        // let replacement = replacement.as_str();
-
-        let x_str_iter = x.as_str_iter().unwrap();
-        x_str_iter
-            .map(|s| {
-                if s.is_na() {
-                    return None;
-                }
-                Some(re.replace(s, &replacement).to_string())
-            })
-            .collect()
+        if replacement.is_function() {
+            rr4r_replace_inner(re, x, &RR4RFunc(Function::from_robj(&replacement).unwrap()))
+        } else if replacement.is_string() {
+            rr4r_replace_inner(re, x, replacement.as_str().unwrap())
+        } else {
+            panic!("Unsupported type")
+        }
     }
+}
+
+fn rr4r_replace_inner<T: Replacer + Copy>(
+    re: &Regex,
+    x: Robj,
+    replacement: T,
+) -> Vec<Option<String>> {
+    let x_str_iter = x.as_str_iter().unwrap();
+    x_str_iter
+        .map(|s| {
+            if s.is_na() {
+                return None;
+            }
+            Some(re.replace(s, replacement).to_string())
+        })
+        .collect()
 }
 
 struct RR4RFunc(Function);
