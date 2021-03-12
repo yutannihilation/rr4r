@@ -215,7 +215,20 @@ impl RR4R {
         }
         let re = self.get_or_compile_regex(&pattern);
         if replacement.is_function() {
-            rr4r_replace_inner(re, x, &RR4RFunc(Function::from_robj(&replacement).unwrap()))
+            let group_names: Vec<Option<&str>> = if re.captures_len() > 1 {
+                re.capture_names().skip(1).collect()
+            } else {
+                vec![]
+            };
+
+            rr4r_replace_inner(
+                re,
+                x,
+                &RR4RFunc {
+                    func: Function::from_robj(&replacement).unwrap(),
+                    group_names: group_names,
+                },
+            )
         } else if replacement.is_string() {
             rr4r_replace_inner(re, x, replacement.as_str().unwrap())
         } else {
@@ -240,19 +253,54 @@ fn rr4r_replace_inner<T: Replacer + Copy>(
         .collect()
 }
 
-struct RR4RFunc(Function);
-
-impl From<Function> for RR4RFunc {
-    fn from(func: Function) -> Self {
-        Self(func)
-    }
+struct RR4RFunc<'a> {
+    func: Function,
+    group_names: Vec<Option<&'a str>>,
 }
 
-impl Replacer for &RR4RFunc {
+impl<'a> Replacer for &RR4RFunc<'a> {
     fn replace_append(&mut self, caps: &Captures, dst: &mut String) {
+        let names_and_values = if self.group_names.len() == 0 {
+            // If there's no capture group, supply the whole match as one unamed arg
+            vec![(na_str(), caps[0].into_robj())]
+        } else {
+            // If there are any capture groups, pass the groups with names
+            caps.iter()
+                .skip(1)
+                .enumerate()
+                .map(|(i, cap)| {
+                    let m = cap.unwrap().as_str();
+                    if m.is_na() {
+                        return None;
+                    }
+
+                    // a capture group name; this might not exist
+                    let nm = self.group_names.get(i);
+                    println!("{:?}", nm);
+                    let nm = nm.unwrap().unwrap_or(na_str());
+
+                    Some((nm, m.into_robj()))
+                })
+                .map(Option::unwrap)
+                .collect::<Vec<_>>()
+        };
+
+        // TOOD: currently, Pairlist doesn't accept "" for its names, so manually set it by set_names
+        let arg_names: Vec<_> = names_and_values
+            .iter()
+            .map(|(nm, _)| {
+                if nm == &na_str() {
+                    "".to_string()
+                } else {
+                    nm.to_string()
+                }
+            })
+            .collect();
+        let args = Pairlist { names_and_values }.into_robj();
+
         if let Some(m) = self
-            .0
-            .call(pairlist!(caps[0].into_robj()))
+            .func
+            .call(args.set_names(arg_names).unwrap())
             .unwrap()
             .as_str()
         {

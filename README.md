@@ -147,3 +147,23 @@ rr4r_replace(fruits, "[aeiou]", "-")
 rr4r_replace("a1", "\\D", toupper)
 #> [1] "A1"
 ```
+
+``` r
+library(lubridate)
+#> 
+#> Attaching package: 'lubridate'
+#> The following objects are masked from 'package:base':
+#> 
+#>     date, intersect, setdiff, union
+
+x <- c("Today is 2020-02-02", "2021-03-30")
+ptn <- "(?P<year>\\d{4})-(?P<month>\\d{2})-(?P<day>\\d{2})"
+
+one_month_ago <- function(year, month, day) {
+  d <- make_date(year, month, day) %m-% months(1)
+  format(d, "%Y-%m-%d")
+}
+
+rr4r_replace(x, ptn, one_month_ago)
+#> [1] "Today is 2020-01-02" "2021-02-28"
+```
