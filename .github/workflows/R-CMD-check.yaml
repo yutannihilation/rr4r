@@ -39,6 +39,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # NOTE: if Cargo.lock is commited, it should be specified for hashFiles() instead.
+      - name: Cache cargo build
+        if: runner.os != 'Windows'
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/
+            src/rust/target
+          key: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}-${{ env.cache-version }}-${{ hashFiles('src/rust/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}--${{ env.cache-version }}-
+
+      # NOTE: if Cargo.lock is commited, it should be specified for hashFiles() instead.
+      - name: Cache cargo build (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/cache@v2
+        with:
+          path: |
+            C:/Rust/.cargo/
+            src/rust/target
+          key: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}-${{ env.cache-version }}-${{ hashFiles('src/rust/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}--${{ env.cache-version }}-
+
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.config.rust-version }}
@@ -68,17 +90,6 @@ jobs:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      # NOTE: if Cargo.lock is commited, it should be specified for hashFiles() instead.
-      - name: Cache cargo build
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            src/rust/target
-          key: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}-${{ env.cache-version }}-${{ hashFiles('src/rust/Cargo.toml') }}
-          restore-keys: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}-
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
