@@ -38,8 +38,9 @@ jobs:
 
     steps:
       - run: |
-        echo $env:USERPROFILE
-      - run: nosuchcommand
+          echo $env:USERPROFILE
+      - run: |
+          nosuchcommand
       - uses: actions/checkout@v2
 
       # NOTE: if Cargo.lock is commited, it should be specified for hashFiles() instead.
