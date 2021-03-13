@@ -14,7 +14,7 @@ name: R-CMD-check
 
 # Increment this version when we want to clear cache
 env:
-  cache-version: v2
+  cache-version: v3
 
 jobs:
   R-CMD-check:
@@ -37,10 +37,6 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - run: |
-          echo $env:USERPROFILE
-      - run: |
-          nosuchcommand
       - uses: actions/checkout@v2
 
       # NOTE: if Cargo.lock is commited, it should be specified for hashFiles() instead.
@@ -61,8 +57,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            C:/Rust/.cargo/git
-            C:/Rust/.cargo/registry
+            C:/Rust/.cargo/
             src/rust/target
           key: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}-${{ env.cache-version }}-${{ hashFiles('src/rust/Cargo.toml') }}
           restore-keys: ${{ runner.os }}-cargo-${{ matrix.config.rust-version }}-${{ env.cache-version }}-
