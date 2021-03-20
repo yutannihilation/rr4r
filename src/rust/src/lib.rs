@@ -110,7 +110,7 @@ impl RR4R {
 
     fn rr4r_extract_all(&mut self, x: Robj, pattern: String, i: u8) -> Robj {
         if x.is_na() {
-            return List(NA_STRING).into();
+            return list!(NA_STRING);
         }
         let re = self.get_or_compile_regex(&pattern);
         if i as usize > re.captures_len() {
@@ -260,7 +260,7 @@ struct RR4RFunc<'a> {
 
 impl<'a> Replacer for &RR4RFunc<'a> {
     fn replace_append(&mut self, caps: &Captures, dst: &mut String) {
-        let names_and_values = if self.group_names.len() == 0 {
+        let pairs = if self.group_names.len() == 0 {
             // If there's no capture group, supply the whole match as one unamed arg
             vec![(na_str(), caps[0].into_robj())]
         } else {
@@ -270,40 +270,34 @@ impl<'a> Replacer for &RR4RFunc<'a> {
                 .enumerate()
                 .map(|(i, cap)| {
                     let m = cap.unwrap().as_str();
-                    if m.is_na() {
-                        return None;
-                    }
 
                     // a capture group name; this might not exist
                     let nm = self.group_names.get(i);
-                    println!("{:?}", nm);
-                    let nm = nm.unwrap().unwrap_or(na_str());
+                    let nm = nm.unwrap().to_owned();
 
-                    Some((nm, m.into_robj()))
+                    if let Some(nm_str) = nm {
+                        (nm_str, m.into_robj())
+                    } else {
+                        (na_str(), m.into_robj())
+                    }
                 })
-                .map(Option::unwrap)
                 .collect::<Vec<_>>()
         };
 
-        // TOOD: currently, Pairlist doesn't accept "" for its names, so manually set it by set_names
-        let arg_names: Vec<_> = names_and_values
-            .iter()
-            .map(|(nm, _)| {
-                if nm == &na_str() {
-                    "".to_string()
-                } else {
-                    nm.to_string()
-                }
-            })
-            .collect();
-        let args = Pairlist { names_and_values }.into_robj();
+        // // TOOD: currently, Pairlist doesn't accept "" for its names, so manually set it by set_names
+        // let arg_names: Vec<_> = robj
+        //     .iter()
+        //     .map(|(nm, _)| {
+        //         if nm == &na_str() {
+        //             "".to_string()
+        //         } else {
+        //             nm.to_string()
+        //         }
+        //     })
+        //     .collect();
+        let args = Pairlist::from_pairs(pairs).into_robj();
 
-        if let Some(m) = self
-            .func
-            .call(args.set_names(arg_names).unwrap())
-            .unwrap()
-            .as_str()
-        {
+        if let Some(m) = self.func.call(args).unwrap().as_str() {
             dst.push_str(m);
         }
     }

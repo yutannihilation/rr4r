@@ -7,6 +7,6 @@ edition = "2018"
 crate-type = ["staticlib"]
 
 [dependencies]
-extendr-api = { git = "https://github.com/extendr/extendr" }
+extendr-api = { git = "https://github.com/extendr/extendr", branch = "more-wrapper-tidying" }
 regex = "1"
 lru = "*"
