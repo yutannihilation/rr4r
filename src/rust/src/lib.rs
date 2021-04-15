@@ -295,7 +295,7 @@ impl<'a> Replacer for &RR4RFunc<'a> {
         //         }
         //     })
         //     .collect();
-        let args = Pairlist::from_pairs(pairs).into_robj();
+        let args = Pairlist::from_pairs(pairs);
 
         if let Some(m) = self.func.call(args).unwrap().as_str() {
             dst.push_str(m);
