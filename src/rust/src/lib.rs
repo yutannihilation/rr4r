@@ -35,7 +35,7 @@ impl RR4R {
         self.cache.clear()
     }
 
-    fn rr4r_detect(&mut self, x: Robj, pattern: String) -> Vec<Bool> {
+    fn rr4r_detect(&mut self, x: Robj, pattern: String) -> Vec<Rbool> {
         if x.is_na() {
             return vec![NA_LOGICAL];
         }
@@ -110,7 +110,7 @@ impl RR4R {
 
     fn rr4r_extract_all(&mut self, x: Robj, pattern: String, i: u8) -> Robj {
         if x.is_na() {
-            return list!(NA_STRING);
+            return r!(list!(NA_STRING));
         }
         let re = self.get_or_compile_regex(&pattern);
         if i as usize > re.captures_len() {
@@ -199,7 +199,7 @@ impl RR4R {
         }
 
         // Create a list from Vec
-        let result: Robj = tmp
+        let mut result: Robj = tmp
             .into_iter()
             .map(|v| v.to_owned().into_robj())
             // To create a list, we need to craete Vec<Robj> first, then convert it to Robj.
@@ -262,7 +262,7 @@ impl<'a> Replacer for &RR4RFunc<'a> {
     fn replace_append(&mut self, caps: &Captures, dst: &mut String) {
         let pairs = if self.group_names.len() == 0 {
             // If there's no capture group, supply the whole match as one unamed arg
-            vec![(na_str(), caps[0].into_robj())]
+            vec![(na_string().as_str().unwrap(), caps[0].into_robj())]
         } else {
             // If there are any capture groups, pass the groups with names
             caps.iter()
@@ -278,7 +278,7 @@ impl<'a> Replacer for &RR4RFunc<'a> {
                     if let Some(nm_str) = nm {
                         (nm_str, m.into_robj())
                     } else {
-                        (na_str(), m.into_robj())
+                        (na_string().as_str().unwrap(), m.into_robj())
                     }
                 })
                 .collect::<Vec<_>>()
@@ -288,7 +288,7 @@ impl<'a> Replacer for &RR4RFunc<'a> {
         // let arg_names: Vec<_> = robj
         //     .iter()
         //     .map(|(nm, _)| {
-        //         if nm == &na_str() {
+        //         if nm == &na_string() {
         //             "".to_string()
         //         } else {
         //             nm.to_string()
